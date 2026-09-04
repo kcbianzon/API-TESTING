@@ -36,7 +36,6 @@ function readBody(request) {
 
 function parseHeaders(value) {
   if (!value) return {};
-  if (typeof value === "object") return value;
   const parsed = JSON.parse(value);
   if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
     throw new Error("Headers must be a JSON object.");
@@ -56,11 +55,7 @@ async function proxyRequest(request, response) {
       });
     }
     const target = new URL(input.url);
-    const params =
-      typeof input.params === "string"
-        ? JSON.parse(input.params || "{}")
-        : input.params || {};
-    for (const [key, value] of Object.entries(params)) {
+    for (const [key, value] of Object.entries(input.params || {})) {
       if (key.trim()) target.searchParams.set(key, String(value));
     }
     const headers = parseHeaders(input.headers);
