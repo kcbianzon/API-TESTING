@@ -1,0 +1,167 @@
+# API Scout
+
+**A universal API health checker and request diagnostics tool.**
+
+API Scout lets you test HTTP APIs from a clean, focused interface. Enter an endpoint, choose a method, add headers or query parameters, send an optional request body, and receive a readable report showing whether the API is working and what may be wrong when it is not.
+
+The app uses a local Node.js proxy so browser CORS restrictions do not create misleading failures. It is useful for quickly checking public APIs, local services, development endpoints, authentication, route configuration, response formats, and service availability.
+
+## Features
+
+- Test `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, and `OPTIONS` requests.
+- Send custom JSON query parameters.
+- Send custom request headers, including API keys and Bearer tokens.
+- Send optional request bodies for write operations.
+- Configure a request timeout from 1 to 30 seconds.
+- See the final URL after redirects.
+- Inspect HTTP status, status text, response time, response headers, and response body.
+- Format JSON responses automatically while preserving plain-text responses.
+- Receive plain-language diagnostics for common problems:
+  - Missing or invalid authentication (`401`)
+  - Access denied or insufficient permissions (`403`)
+  - Missing routes and incorrect API versions (`404`)
+  - Unsupported HTTP methods (`405`)
+  - Timeouts (`408`, `504`, and network timeouts)
+  - Server-side failures (`5xx`)
+  - Invalid request or validation errors (`4xx`)
+  - Unexpected or missing response content types
+- Keep the six most recent checks available in the current browser session.
+- Use a responsive interface on desktop and mobile screens.
+
+## Preview
+
+The interface is organized into three parts:
+
+1. **Compose request**: configure the method, URL, parameters, headers, body, and timeout.
+2. **Read the signal**: inspect the result and the recommended next checks.
+3. **Recent checks**: quickly repeat a recent request from the current session.
+
+## Requirements
+
+- Node.js 18 or newer
+- Internet access for external APIs
+- A browser with JavaScript enabled
+
+No npm dependencies are required.
+
+## Getting Started
+
+Clone the repository and open its folder:
+
+```powershell
+git clone <your-repository-url>
+cd api-scout
+```
+
+Start the server:
+
+```powershell
+npm start
+```
+
+Open [http://localhost:4173](http://localhost:4173) in your browser.
+
+For development with automatic server restarts:
+
+```powershell
+npm run dev
+```
+
+To use another port, set the `PORT` environment variable:
+
+```powershell
+$env:PORT=5000
+npm start
+```
+
+## How To Use It
+
+Enter a complete URL beginning with `http://` or `https://`, then click **Run check**.
+
+Query parameters must be a JSON object:
+
+```json
+{
+  "page": 2,
+  "limit": 25,
+  "includeArchived": false
+}
+```
+
+Headers must also be a JSON object:
+
+```json
+{
+  "Accept": "application/json",
+  "Authorization": "Bearer your-token"
+}
+```
+
+For `POST`, `PUT`, or `PATCH`, enter the request body as JSON or plain text, depending on what the API expects. Add a matching `Content-Type` header when required:
+
+```json
+{
+  "name": "Ada Lovelace",
+  "active": true
+}
+```
+
+## Understanding Results
+
+An HTTP status is evidence, not the whole diagnosis:
+
+| Result        | Meaning                                  | What to check                                                        |
+| ------------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `2xx`         | The server accepted the request          | Confirm the response body matches the API contract                   |
+| `3xx`         | The request was redirected               | Review the displayed final URL and redirect behavior                 |
+| `400`         | The request is invalid                   | Check required fields, JSON syntax, and validation rules             |
+| `401`         | Authentication failed or is missing      | Check the token, API key, or authentication header                   |
+| `403`         | The server denied access                 | Check permissions, scopes, roles, and IP allowlists                  |
+| `404`         | The route does not exist                 | Check the hostname, path, API version, and trailing slash            |
+| `405`         | The method is not supported              | Use the method documented by the API                                 |
+| `5xx`         | The server or an upstream service failed | Inspect server logs and service dependencies                         |
+| Network error | The request could not reach the endpoint | Check DNS, TLS, firewall rules, service availability, and URL format |
+
+## How It Works
+
+```text
+Browser UI
+		|
+		| POST /api/proxy
+		v
+Local Node.js server
+		|
+		| Server-side fetch
+		v
+Target HTTP API
+```
+
+The browser sends the request configuration to the local server. The server performs the outbound request, captures the upstream response, and returns a structured result for the interface to display. This avoids CORS false negatives while keeping the tool simple and easy to run locally.
+
+## Project Structure
+
+```text
+api-scout/
+├── public/
+│   ├── app.js          # Request logic, response rendering, and diagnostics
+│   ├── index.html      # Application interface
+│   └── styles.css      # Responsive visual design
+├── package.json        # Scripts and Node.js requirement
+├── server.js           # Static server and API proxy
+└── README.md           # Project documentation
+```
+
+## Limits and Notes
+
+- Only `http://` and `https://` URLs are accepted.
+- Request bodies are limited to 2 MB.
+- Response previews are limited to 1 MB.
+- Timeouts are clamped between 1 and 30 seconds.
+- `GET` and `HEAD` requests do not send a request body.
+- Recent request history is stored only in memory and is cleared when the page is refreshed.
+- API credentials are passed through to the selected endpoint for that request, but API Scout does not save them.
+- The proxy is intended for local development. Do not expose it publicly without adding authentication, access controls, and protections against unauthorized server-side requests.
+
+## License
+
+No license has been selected for this repository yet. Add a license before publishing if you want others to reuse or modify the project under defined terms.
