@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Scout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">+</span><span>API Scout</span></a>
+    <div class="topbar-note"><span class="pulse"></span> local diagnostic proxy</div>
+  </header>
+  <main class="shell">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">Universal endpoint intelligence</p>
+        <h1>Find out what your API is really saying.</h1>
+        <p class="lede">Probe any HTTP endpoint, inspect the evidence, and get a plain-language read on what needs attention.</p>
+      </div>
+      <div class="stat-block"><strong id="runCount">0</strong><span>checks this session</span></div>
+    </section>
+
+    <section class="workbench">
+      <div class="request-pane">
+        <div class="section-label"><span>01</span> Compose request</div>
+        <div class="method-url">
+          <select id="method" aria-label="HTTP method"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option></select>
+          <input id="url" type="url" value="https://jsonplaceholder.typicode.com/todos/1" placeholder="https://api.example.com/health" aria-label="Request URL">
+          <button id="sendButton" class="send-button"><span>Run check</span><span class="arrow">&#8594;</span></button>
+        </div>
+        <div class="field-grid">
+          <label><span>Query parameters <i>JSON</i></span><textarea id="params" rows="5">{}</textarea></label>
+          <label><span>Headers <i>JSON</i></span><textarea id="headers" rows="5">{"Accept":"application/json"}</textarea></label>
+        </div>
+        <label class="body-field"><span>Request body <i>optional</i></span><textarea id="body" rows="4" placeholder="{\n  &quot;name&quot;: &quot;Ada&quot;\n}"></textarea></label>
+        <div class="request-options"><label>Timeout <input id="timeout" type="number" min="1" max="30" value="10"><span>seconds</span></label><button id="clearButton" class="text-button">Clear response</button></div>
+      </div>
+
+      <div class="response-pane">
+        <div class="response-head"><div class="section-label"><span>02</span> Read the signal</div><span id="duration" class="duration">Waiting for a check</span></div>
+        <div id="emptyState" class="empty-state"><div class="empty-icon">/</div><h2>Your result will land here.</h2><p>Run a request to see status, latency, headers, a response preview, and likely causes when something goes wrong.</p></div>
+        <div id="result" class="result hidden">
+          <div class="status-row"><div><span id="statusBadge" class="status-badge">200 OK</span><span id="statusSummary" class="status-summary">Request completed successfully</span></div><span id="statusDot" class="status-dot"></span></div>
+          <div id="diagnostics" class="diagnostics"></div>
+          <div class="result-grid"><div><h3>Response headers</h3><pre id="responseHeaders"></pre></div><div><h3>Response body</h3><pre id="responseBody"></pre></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="history-section"><div class="section-label"><span>03</span> Recent checks</div><div id="history" class="history"><p class="history-empty">No checks yet. Your recent probes will appear here.</p></div></section>
+  </main>
+  <footer><span>API Scout</span><span>Requests are made server-side to avoid browser CORS false negatives.</span></footer>
+  <script src="/app.js"></script>
+</body>
+</html>
